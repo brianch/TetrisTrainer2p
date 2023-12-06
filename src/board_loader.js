@@ -11,7 +11,7 @@ export function BoardLoader(board, canvas) {
   this.board = board;
   this.canvas = canvas;
 
-  setUpPasteability(this);
+  //setUpPasteability(this);
 }
 
 BoardLoader.prototype.resetBoard = function () {
@@ -101,7 +101,7 @@ function clearFloatingPiece(board, dummyContext, SQ) {
     }
   }
 }
-
+/*
 function setUpPasteability(boardLoaderThis) {
   // When an image is pasted, get the board state from it
   pasteAreaElement.onpaste = function (event) {
@@ -128,3 +128,4 @@ function setUpPasteability(boardLoaderThis) {
     }
   };
 }
+*/

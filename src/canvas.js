@@ -38,13 +38,13 @@ Canvas.prototype.drawLineClears = function (rowsArray, frameNum) {
       leftColToClear * SQUARE_SIZE,
       rowNum * SQUARE_SIZE,
       SQUARE_SIZE,
-      SQUARE_SIZE,
+      SQUARE_SIZE
     );
     context.fillRect(
       rightColToClear * SQUARE_SIZE,
       rowNum * SQUARE_SIZE,
       SQUARE_SIZE,
-      SQUARE_SIZE,
+      SQUARE_SIZE
     );
   }
 };
@@ -57,7 +57,7 @@ Canvas.prototype.drawSquare = function (x, y, color, border = false) {
       x * SQUARE_SIZE,
       y * SQUARE_SIZE,
       SQUARE_SIZE,
-      SQUARE_SIZE,
+      SQUARE_SIZE
     );
     return;
   }
@@ -68,7 +68,7 @@ Canvas.prototype.drawSquare = function (x, y, color, border = false) {
     x * SQUARE_SIZE,
     y * SQUARE_SIZE,
     7 * PIXEL_SIZE,
-    7 * PIXEL_SIZE,
+    7 * PIXEL_SIZE
   );
 
   if (border && color !== VACANT) {
@@ -77,7 +77,7 @@ Canvas.prototype.drawSquare = function (x, y, color, border = false) {
       x * SQUARE_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE,
       5 * PIXEL_SIZE,
-      5 * PIXEL_SIZE,
+      5 * PIXEL_SIZE
     );
   }
   // Draw 'shiny' part
@@ -88,19 +88,19 @@ Canvas.prototype.drawSquare = function (x, y, color, border = false) {
       x * SQUARE_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE,
       PIXEL_SIZE,
-      PIXEL_SIZE,
+      PIXEL_SIZE
     );
     context.fillRect(
       x * SQUARE_SIZE + PIXEL_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE,
       PIXEL_SIZE,
-      PIXEL_SIZE,
+      PIXEL_SIZE
     );
     context.fillRect(
       x * SQUARE_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE + PIXEL_SIZE,
       PIXEL_SIZE,
-      PIXEL_SIZE,
+      PIXEL_SIZE
     );
   }
 };
@@ -122,7 +122,7 @@ Canvas.prototype.drawNextBox = function (nextPiece) {
     startX * SQUARE_SIZE,
     startY * SQUARE_SIZE,
     width * SQUARE_SIZE,
-    height * SQUARE_SIZE,
+    height * SQUARE_SIZE
   );
 
   if (nextPiece != null) {
@@ -141,7 +141,7 @@ Canvas.prototype.drawNextBox = function (nextPiece) {
             pieceStartX + c,
             pieceStartY + r,
             color,
-            nextPiece.colorId === 1,
+            nextPiece.colorId === 1
           );
         }
       }
@@ -162,7 +162,7 @@ Canvas.prototype.drawScoreDisplay = function (score, color) {
     startY,
     width,
     "center",
-    color,
+    color
   );
 };
 
@@ -178,7 +178,7 @@ Canvas.prototype.drawLinesDisplay = function (numLines, color) {
     startY,
     width,
     "center",
-    color,
+    color
   );
 };
 
@@ -194,7 +194,7 @@ Canvas.prototype.drawLevelDisplay = function (level, color) {
     startY,
     width,
     "center",
-    color,
+    color
   );
 };
 
@@ -214,7 +214,7 @@ Canvas.prototype.drawTetrisRateDisplay = function (tetrisCount, lines, color) {
     startY,
     width,
     "center",
-    color,
+    color
   );
 };
 
@@ -232,7 +232,7 @@ Canvas.prototype.drawMultiLineText = function (
   startY,
   width,
   align,
-  color,
+  color
 ) {
   const lineHeight = 20;
 
@@ -251,7 +251,7 @@ Canvas.prototype.drawMultiLineText = function (
     context.fillText(
       line.toUpperCase(),
       startX + alignOffsetFactor,
-      startY + (lineIndex + 1) * lineHeight,
+      startY + (lineIndex + 1) * lineHeight
     );
     lineIndex++;
   }
@@ -272,7 +272,7 @@ Canvas.prototype.drawPiece = function (piece) {
             piece.x + c,
             piece.y + r,
             COLOR_PALETTE[piece.colorId][level % 10],
-            border,
+            border
           );
         } else {
           this.drawSquare(piece.x + c, piece.y + r, VACANT, border);
@@ -319,12 +319,6 @@ Canvas.prototype.drawBoard = function () {
     }
   }
 
-  if (GameSettings.shouldShowDiggingHints()) {
-    this.drawDiggingHints();
-  }
-  if (GameSettings.shouldShowParityHints()) {
-    this.drawParityHints();
-  }
   // const drawEnd = window.performance.now();
   // console.log(drawEnd - drawStart);
 };
@@ -372,7 +366,7 @@ function fillSquare(row, col, color) {
     col * SQUARE_SIZE + PIXEL_SIZE,
     row * SQUARE_SIZE + PIXEL_SIZE,
     SQUARE_SIZE - 3 * PIXEL_SIZE,
-    SQUARE_SIZE - 3 * PIXEL_SIZE,
+    SQUARE_SIZE - 3 * PIXEL_SIZE
   );
 }
 
@@ -383,43 +377,6 @@ function fillRow(row, color, board) {
     }
   }
 }
-
-Canvas.prototype.drawDiggingHints = function () {
-  const topMostHole = getTopmostHole(this.board);
-  const rowsCoveringWell = getRowsCoveringWell(this.board);
-
-  if (topMostHole.length > 0) {
-    // Find the rows that need to be cleared
-    const row = topMostHole[0];
-    const col = topMostHole[1];
-    let rowsToClear = [];
-
-    let currentRow = row - 1;
-    while (currentRow >= 0 && filledIfExists(currentRow, col, this.board)) {
-      rowsToClear.push(currentRow);
-      currentRow -= 1;
-    }
-
-    // Draw a yellow circle in the topmost hole
-    const centerY = (row + 0.45) * SQUARE_SIZE;
-    const centerX = (col + 0.45) * SQUARE_SIZE;
-    const radius = SQUARE_SIZE / 4;
-    context.fillStyle = "yellow";
-    context.beginPath();
-    context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-    context.fill();
-
-    // Fill in the empty spaces with red in rows that need to be cleared
-    for (let loopRow of rowsToClear) {
-      fillRow(loopRow, "#842424", this.board);
-    }
-  } else if (rowsCoveringWell.length > 0) {
-    // Fill in the empty spaces with red in rows that need to be cleared
-    for (let loopRow of rowsCoveringWell) {
-      fillRow(loopRow, "#215E30", this.board);
-    }
-  }
-};
 
 function numToSingleDigiHex(num) {
   num = Math.floor(num);
@@ -435,40 +392,3 @@ function numToSingleDigiHex(num) {
     return "f";
   }
 }
-
-Canvas.prototype.drawParityHints = function () {
-  const localParities = [];
-  for (let c = 0; c < NUM_COLUMN; c++) {
-    localParities[c] = calcParity(c - 2, c + 3);
-  }
-
-  // Normalize over the nearby columns
-  let normalizedLocalParities = [];
-  for (let i = 0; i < NUM_COLUMN; i++) {
-    let total = 0;
-    let numAdded = 0;
-    [i - 1, i, i + 1].forEach((x) => {
-      if (x >= 0 && x < NUM_COLUMN) {
-        total += localParities[x];
-        numAdded += 1;
-      }
-    });
-    if (numAdded == 0) {
-      throw new Error("None added");
-    }
-    normalizedLocalParities[i] = total / numAdded; // numAdded is never 0 since the col itself will always be added
-  }
-
-  for (let c = 0; c < NUM_COLUMN; c++) {
-    const normalizedLocalParity = normalizedLocalParities[c];
-    for (let r = 0; r < NUM_ROW; r++) {
-      if (this.board[r][c] == SquareState.EMPTY) {
-        // Get a shade of red proportional to the parity
-        const transformedParity = Math.max(5 * normalizedLocalParity - 4, 0);
-        const alphaChannel = numToSingleDigiHex(transformedParity);
-        const fillColor = "#ff0000" + alphaChannel + alphaChannel;
-        fillSquare(r, c, fillColor);
-      }
-    }
-  }
-};

@@ -1,14 +1,18 @@
-#center-panel {
+#center-panel, #opp-panel {
   display: block;
   margin: 0 auto;
 }
 
-#game-container {
+#game-container, #opp-game-container {
   display: flex;
   flex-direction: column;
   background: hsl(0, 0%, 79%);
   padding: 30px;
   position: relative;
+}
+
+#opp-game-container {
+  color: black;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -119,7 +123,7 @@
   font-size: 20px;
 }
 
-#main-canvas {
+#main-canvas, #opp-main-canvas {
   image-rendering: pixelated;
   margin: auto;
   flex: 1;

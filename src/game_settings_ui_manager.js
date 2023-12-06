@@ -7,7 +7,7 @@ import {
   STANDARD_TAPPER_PRESET,
 } from "./game_settings_presets";
 
-const dasSpeedDropdown = document.getElementById("das-speed-dropdown");
+/* const dasSpeedDropdown = document.getElementById("das-speed-dropdown");
 const dasBehaviorDropdown = document.getElementById("das-behavior-dropdown");
 const gameSpeedDropdown = document.getElementById("game-speed-dropdown");
 const startingBoardDropdown = document.getElementById("starting-board");
@@ -15,7 +15,7 @@ const droughtCheckbox = document.getElementById("drought-checkbox");
 const diggingHintsCheckbox = document.getElementById("digging-hints-checkbox");
 const parityHintsCheckbox = document.getElementById("parity-hints-checkbox");
 const transition10Checkbox = document.getElementById("transition-10-checkbox");
-const pieceSequenceText = document.getElementById("piece-sequence");
+const pieceSequenceText = document.getElementById("piece-sequence"); */
 const levelSelectElement = document.getElementById("level-select");
 const fullscreenCheckbox = document.getElementById("fullscreen-checkbox");
 
@@ -84,7 +84,7 @@ function onLevelChanged() {
     }
   }
 }
-
+/*
 function addOnChangeListeners() {
   // When user changes a preference manually, associate it with their user cookie so the preference is remembered
   dasSpeedDropdown.addEventListener("change", (e) => {
@@ -132,6 +132,7 @@ function addOnChangeListeners() {
   });
 }
 addOnChangeListeners();
+*/
 
 // Assign on click listeners, e.g. #level-0 sets it to 0.
 [0, 5, 8, 9, 15, 18, 19, 29].forEach((num) => {
@@ -147,6 +148,7 @@ addOnChangeListeners();
 
 function setSetting(settingName, value) {
   switch (settingName) {
+    /*
     case "DASSpeed":
       dasSpeedDropdown.value = DAS_SPEED_LIST.findIndex((x) => x == value);
       break;
@@ -178,6 +180,7 @@ function setSetting(settingName, value) {
         (x) => x == value,
       );
       break;
+    */
     case "StartingLevel":
       levelSelectElement.value = value;
       onLevelChanged();
@@ -189,7 +192,7 @@ export function getStartingLevel() {
   const tempLevel = parseInt(levelSelectElement.value);
   return Math.max(tempLevel, 0);
 }
-
+/*
 export function getTransition10Lines() {
   return transition10Checkbox.checked;
 }
@@ -235,12 +238,13 @@ export function getPieceSequence() {
 export function getStartingBoardType() {
   return STARTING_BOARD_LIST[startingBoardDropdown.value];
 }
+*/
 
 /* ---------- PRESETS ----------- */
 
 export function loadPreset(presetObj) {
   const settingsList = [
-    ["DASSpeed", dasSpeedDropdown],
+    /*     ["DASSpeed", dasSpeedDropdown],
     ["DASBehavior", dasBehaviorDropdown],
     ["DroughtModeEnabled", droughtCheckbox],
     ["DiggingHintsEnabled", diggingHintsCheckbox],
@@ -248,7 +252,7 @@ export function loadPreset(presetObj) {
     ["ParityHintsEnabled", parityHintsCheckbox],
     ["PieceSequence", pieceSequenceText],
     ["Transition10Lines", transition10Checkbox],
-    ["StartingBoardType", startingBoardDropdown],
+    ["StartingBoardType", startingBoardDropdown], */
     ["StartingLevel", levelSelectElement],
   ];
 

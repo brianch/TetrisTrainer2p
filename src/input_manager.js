@@ -1,10 +1,10 @@
 import { Direction, GameState } from "./constants.js";
 import {
   GetIsPaused,
-  G_FastForward,
+  //  G_FastForward,
   G_Quit,
   G_Restart,
-  G_Rewind,
+  //  G_Rewind,
   G_StartPause,
   G_GetGameState,
   G_MoveCurrentPieceDown,
@@ -18,29 +18,29 @@ const keyEditPopup = document.getElementById("edit-key");
 
 const DEFAULT_KEY_MAP = {
   RESTART: "r",
-  REWIND: "v",
-  FAST_FORWARD: "b",
+  //  REWIND: "v",
+  //  FAST_FORWARD: "b",
   START_PAUSE: "Enter",
   QUIT: "q",
-  ROTATE_LEFT: "z",
-  ROTATE_RIGHT: "x",
-  LEFT: "ArrowLeft",
-  DOWN: "ArrowDown",
-  RIGHT: "ArrowRight",
+  ROTATE_LEFT: "ArrowLeft",
+  ROTATE_RIGHT: "ArrowRight",
+  LEFT: "a",
+  DOWN: "z",
+  RIGHT: "s",
 };
 
 let KEY_MAP = DEFAULT_KEY_MAP;
 
 const idToKeyMap = [
-  ["key-rot-left", "ROTATE_LEFT"],
-  ["key-rot-right", "ROTATE_RIGHT"],
-  ["key-left", "LEFT"],
-  ["key-right", "RIGHT"],
+  ["key-rot-left", "LEFT"],
+  ["key-rot-right", "RIGHT"],
+  ["key-left", "ROTATE_LEFT"],
+  ["key-right", "ROTATE_RIGHT"],
   ["key-down", "DOWN"],
   ["key-start-pause", "START_PAUSE"],
   ["key-restart", "RESTART"],
-  ["key-undo", "REWIND"],
-  ["key-redo", "FAST_FORWARD"],
+  //  ["key-undo", "REWIND"],
+  //  ["key-redo", "FAST_FORWARD"],
   ["key-quit", "QUIT"],
 ];
 
@@ -118,7 +118,7 @@ InputManager.prototype.onPieceLock = function () {
     // Don't allow DAS charges higher than the wall charge amount.
     // This is used on DAS speeds with higher ARR but intentionally handicapped starting charges
     this.setDASCharge(
-      Math.min(GameSettings.getDASWallChargeAmount(), this.dasCharge),
+      Math.min(GameSettings.getDASWallChargeAmount(), this.dasCharge)
     );
   }
 };
@@ -195,7 +195,7 @@ InputManager.prototype.keyDownListener = function (event) {
     case KEY_MAP.RESTART:
       G_Restart();
       break;
-
+    /*
     case KEY_MAP.REWIND:
       G_Rewind();
       break;
@@ -203,7 +203,7 @@ InputManager.prototype.keyDownListener = function (event) {
     case KEY_MAP.FAST_FORWARD:
       G_FastForward();
       break;
-
+*/
     case KEY_MAP.START_PAUSE:
       G_StartPause();
       break;
