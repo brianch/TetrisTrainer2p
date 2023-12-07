@@ -1,6 +1,9 @@
 const mainCanvas = document.getElementById("main-canvas");
 const context = mainCanvas.getContext("2d");
 
+const oppCanvas = document.getElementById("opp-canvas");
+const oppContext = oppCanvas.getContext("2d");
+
 import {
   NUM_ROW,
   NUM_COLUMN,
@@ -49,21 +52,28 @@ Canvas.prototype.drawLineClears = function (rowsArray, frameNum) {
 };
 
 // draw a square
-Canvas.prototype.drawSquare = function (x, y, color, border = false) {
+Canvas.prototype.drawSquare = function (
+  x,
+  y,
+  color,
+  border = false,
+  opp = false
+) {
+  var ctx;
+  if (opp) {
+    ctx = oppContext;
+  } else {
+    ctx = context;
+  }
   if (color == VACANT) {
-    context.fillStyle = "black";
-    context.fillRect(
-      x * SQUARE_SIZE,
-      y * SQUARE_SIZE,
-      SQUARE_SIZE,
-      SQUARE_SIZE
-    );
+    ctx.fillStyle = "black";
+    ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
     return;
   }
 
   // For I, T, and O
-  context.fillStyle = color;
-  context.fillRect(
+  ctx.fillStyle = color;
+  ctx.fillRect(
     x * SQUARE_SIZE,
     y * SQUARE_SIZE,
     7 * PIXEL_SIZE,
@@ -71,8 +81,8 @@ Canvas.prototype.drawSquare = function (x, y, color, border = false) {
   );
 
   if (border && color !== VACANT) {
-    context.fillStyle = "white";
-    context.fillRect(
+    ctx.fillStyle = "white";
+    ctx.fillRect(
       x * SQUARE_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE,
       5 * PIXEL_SIZE,
@@ -81,21 +91,21 @@ Canvas.prototype.drawSquare = function (x, y, color, border = false) {
   }
   // Draw 'shiny' part
   if (color !== VACANT) {
-    context.fillStyle = "white";
-    context.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, PIXEL_SIZE, PIXEL_SIZE);
-    context.fillRect(
+    ctx.fillStyle = "white";
+    ctx.fillRect(x * SQUARE_SIZE, y * SQUARE_SIZE, PIXEL_SIZE, PIXEL_SIZE);
+    ctx.fillRect(
       x * SQUARE_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE,
       PIXEL_SIZE,
       PIXEL_SIZE
     );
-    context.fillRect(
+    ctx.fillRect(
       x * SQUARE_SIZE + PIXEL_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE,
       PIXEL_SIZE,
       PIXEL_SIZE
     );
-    context.fillRect(
+    ctx.fillRect(
       x * SQUARE_SIZE + PIXEL_SIZE,
       y * SQUARE_SIZE + PIXEL_SIZE + PIXEL_SIZE,
       PIXEL_SIZE,
@@ -108,16 +118,22 @@ Canvas.prototype.drawSquare = function (x, y, color, border = false) {
  * Draws the next box. If nextPiece is nonnull, draws the piece in it.
  * @param {Piece object} nextPiece
  */
-Canvas.prototype.drawNextBox = function (nextPiece) {
+Canvas.prototype.drawNextBox = function (nextPiece, opp = false) {
   // All in units of SQUARE_SIZE
   const startX = NUM_COLUMN + 1;
   const startY = 8;
   const width = 5;
   const height = 4.5;
+  var ctx;
+  if (opp) {
+    ctx = oppContext;
+  } else {
+    ctx = context;
+  }
 
   // background
-  context.fillStyle = "BLACK";
-  context.fillRect(
+  ctx.fillStyle = "BLACK";
+  ctx.fillRect(
     startX * SQUARE_SIZE,
     startY * SQUARE_SIZE,
     width * SQUARE_SIZE,
@@ -140,7 +156,8 @@ Canvas.prototype.drawNextBox = function (nextPiece) {
             pieceStartX + c,
             pieceStartY + r,
             color,
-            nextPiece.colorId === 1
+            nextPiece.colorId === 1,
+            opp
           );
         }
       }
@@ -148,26 +165,26 @@ Canvas.prototype.drawNextBox = function (nextPiece) {
   }
 };
 
-Canvas.prototype.drawScoreDisplay = function (score, color) {
+Canvas.prototype.drawScoreDisplay = function (score, opp = false) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 0.5 * SQUARE_SIZE;
 
   const size = score >= 1000000 ? 7 : 6;
   const formattedScore = ("0".repeat(size) + score).slice(-1 * size);
-  this.strokeStyle = WHITE_COLOR;
-  this.fillStyle = WHITE_COLOR;
+  //this.strokeStyle = WHITE_COLOR;
+  //this.fillStyle = WHITE_COLOR;
   this.drawMultiLineText(
     ["SCORE", formattedScore],
     startX,
     startY,
     width,
     "center",
-    color
+    opp
   );
 };
 
-Canvas.prototype.drawLinesDisplay = function (numLines, color) {
+Canvas.prototype.drawLinesDisplay = function (numLines, opp = false) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 3 * SQUARE_SIZE;
@@ -181,11 +198,11 @@ Canvas.prototype.drawLinesDisplay = function (numLines, color) {
     startY,
     width,
     "center",
-    color
+    opp
   );
 };
 
-Canvas.prototype.drawLevelDisplay = function (level, color) {
+Canvas.prototype.drawLevelDisplay = function (level) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 14 * SQUARE_SIZE;
@@ -196,12 +213,11 @@ Canvas.prototype.drawLevelDisplay = function (level, color) {
     startX,
     startY,
     width,
-    "center",
-    color
+    "center"
   );
 };
 
-Canvas.prototype.drawTetrisRateDisplay = function (tetrisCount, lines, color) {
+Canvas.prototype.drawTetrisRateDisplay = function (tetrisCount, lines) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 17 * SQUARE_SIZE;
@@ -216,17 +232,16 @@ Canvas.prototype.drawTetrisRateDisplay = function (tetrisCount, lines, color) {
     startX,
     startY,
     width,
-    "center",
-    color
+    "center"
   );
 };
 
-Canvas.prototype.drawPieceStatusDisplay = function (linesOfText) {
+Canvas.prototype.drawPieceStatusDisplay = function (linesOfText, opp = false) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 6 * SQUARE_SIZE;
 
-  this.drawMultiLineText(linesOfText, startX, startY, width, "center");
+  this.drawMultiLineText(linesOfText, startX, startY, width, "center", opp);
 };
 
 Canvas.prototype.drawMultiLineText = function (
@@ -235,23 +250,29 @@ Canvas.prototype.drawMultiLineText = function (
   startY,
   width,
   align,
-  color
+  opp = false
 ) {
+  var ctx;
+  if (opp) {
+    ctx = oppContext;
+  } else {
+    ctx = context;
+  }
   const lineHeight = 20;
 
   // Clear previous text
-  context.clearRect(startX, startY, width, linesOfText.length * lineHeight);
+  ctx.clearRect(startX, startY, width, linesOfText.length * lineHeight);
 
   // Write "x of x" text
-  context.textAlign = "center";
-  context.font = "18px 'Press Start 2P'";
-  context.fillStyle = typeof color === "string" ? color : "BLACK";
+  ctx.textAlign = "center";
+  ctx.font = "18px 'Press Start 2P'";
+  ctx.fillStyle = "BLACK";
 
   const alignOffsetFactor = align == "center" ? width / 2 : 0;
 
   let lineIndex = 0;
   for (let line of linesOfText) {
-    context.fillText(
+    ctx.fillText(
       line.toUpperCase(),
       startX + alignOffsetFactor,
       startY + (lineIndex + 1) * lineHeight
@@ -260,7 +281,7 @@ Canvas.prototype.drawMultiLineText = function (
   }
 };
 
-Canvas.prototype.drawPiece = function (piece) {
+Canvas.prototype.drawPiece = function (piece, opp = false) {
   if (piece == undefined) {
     return;
   }
@@ -275,10 +296,11 @@ Canvas.prototype.drawPiece = function (piece) {
             piece.x + c,
             piece.y + r,
             COLOR_PALETTE[piece.colorId][level % 10],
-            border
+            border,
+            opp
           );
         } else {
-          this.drawSquare(piece.x + c, piece.y + r, VACANT, border);
+          this.drawSquare(piece.x + c, piece.y + r, VACANT, border, opp);
         }
       }
     }
@@ -308,16 +330,22 @@ Canvas.prototype.unDrawCurrentPiece = function () {
 };
 
 // Draw the pieces locked into the board (NB: does not render the current piece)
-Canvas.prototype.drawBoard = function () {
+Canvas.prototype.drawBoard = function (opp = false) {
   // const drawStart = window.performance.now();
   const level = GetLevel();
   for (let r = 0; r < NUM_ROW; r++) {
     for (let c = 0; c < NUM_COLUMN; c++) {
       let square = this.board[r][c];
       if (square !== 0) {
-        this.drawSquare(c, r, COLOR_PALETTE[square][level % 10], square === 1);
+        this.drawSquare(
+          c,
+          r,
+          COLOR_PALETTE[square][level % 10],
+          square === 1,
+          opp
+        );
       } else {
-        this.drawSquare(c, r, VACANT, square === 1);
+        this.drawSquare(c, r, VACANT, square === 1, opp);
       }
     }
   }

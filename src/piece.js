@@ -10,17 +10,26 @@ import { TriggerGameOver } from ".";
  * ]} pieceData
  * @param {int[][]} board
  */
-export function Piece(pieceData, board) {
+export function Piece(pieceData, board, rotation, x, y) {
   this.rotationList = pieceData[0]; // All of the available rotations
   this.colorId = pieceData[1];
   this.id = pieceData[2];
   this.board = board;
 
-  this.rotationIndex = 0; // Start from the first rotation
+  if (rotation != undefined) {
+    this.rotationIndex = rotation;
+  } else {
+    this.rotationIndex = 0; // Start from the first rotation
+  }
   this.activeTetromino = this.rotationList[this.rotationIndex];
 
-  this.x = 3;
-  this.y = this.id == "I" ? -2 : -1; // The I piece spawns higher than the others
+  if (x != undefined) {
+    this.x = x;
+    this.y = y;
+  } else {
+    this.x = 3;
+    this.y = this.id == "I" ? -2 : -1; // The I piece spawns higher than the others
+  }
 }
 
 Piece.prototype.equals = function (otherPiece) {

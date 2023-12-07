@@ -11,6 +11,10 @@
   position: relative;
 }
 
+#main-canvas-crop {
+  display: none;
+}
+
 #opp-game-container {
   color: black;
 }

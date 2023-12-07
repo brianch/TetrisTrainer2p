@@ -38,6 +38,7 @@ for (let r = 0; r < NUM_ROW; r++) {
 // Manager objects
 let m_inputManager;
 let m_canvas = new Canvas(m_board);
+let m_opp_canvas;
 let m_boardGenerator = new BoardGenerator(m_board);
 let m_pieceSelector = new PieceSelector();
 let conn;
@@ -57,12 +58,36 @@ peer.on("open", function (id) {
 });
 peer.on("connection", function (conn) {
   conn.on("data", function (data) {
-    if (Object.hasOwn(data, "score")) {
-      document.getElementById("opp-score").innerText = data.score;
-      document.getElementById("opp-lines").innerText = data.lines;
+    if (Object.hasOwn(data, "opp_score")) {
+      //document.getElementById("opp-score").innerText = data.opp_score;
+      //document.getElementById("opp-lines").innerText = data.opp_lines;
+
+      const opp_piece = new Piece(
+        [data.opp_piece[0], data.opp_piece[1], data.opp_piece[2]],
+        data.opp_piece[6],
+        data.opp_piece[3],
+        data.opp_piece[4],
+        data.opp_piece[5]
+      );
+      const opp_next = new Piece(
+        [data.opp_next[0], data.opp_next[1], data.opp_next[2]],
+        data.opp_next[6],
+        data.opp_next[3],
+        data.opp_next[4],
+        data.opp_next[5]
+      );
+      m_opp_canvas = new Canvas(data.opp_board);
+      m_opp_canvas.drawBoard(true);
+      m_opp_canvas.drawPiece(opp_piece, true);
+      m_opp_canvas.drawNextBox(opp_next, true);
+      m_opp_canvas.drawScoreDisplay(data.opp_score, true);
+      m_opp_canvas.drawLinesDisplay(data.opp_lines, true);
     }
     //console.log(data);
   });
+});
+peer.on("error", function (err) {
+  console.log(err);
 });
 
 // State relevant to game itself
@@ -297,7 +322,7 @@ function connectPeer() {
   conn.on("open", function () {
     // here you have conn.id
     document.getElementById("connect-with-opp").innerHTML = "Connected";
-    //conn.send("hi!");
+    conn.send("hi!");
   });
 }
 
@@ -346,6 +371,7 @@ function startGame() {
 */
   refreshPreGame();
 
+  /*
   var mainCanvas = document.getElementById("main-canvas");
   //var newCanvas = document.getElementById("main-canvas-crop");
   //newCanvas.width = 300;
@@ -368,7 +394,7 @@ function startGame() {
       video.srcObject = remoteStream;
       video.play();
     });
-  });
+  });*/
 }
 
 /** Progress the game state, and perform any other updates that occur on
@@ -389,11 +415,6 @@ function updateGameState() {
     m_score += m_pendingPoints;
     m_pendingPoints = 0;
     refreshScoreHUD();
-
-    const size = m_score >= 1000000 ? 7 : 6;
-    const formattedScore = ("0".repeat(size) + m_score).slice(-1 * size);
-    const formattedLines = ("0".repeat(3) + m_lines).slice(-3);
-    conn.send({ score: formattedScore, lines: formattedLines });
 
     // Draw the next piece, since it's the end of ARE (and that's how NES does it)
     m_canvas.drawCurrentPiece();
@@ -479,6 +500,7 @@ function runOneFrame() {
             m_gravityFrameCount = 0;
           }
         }
+        sendInfoToPeer();
 
         break;
     }
@@ -521,13 +543,48 @@ function gameLoop() {
     const start = window.performance.now();
     runOneFrame();
     const msElapsed = window.performance.now() - start;
-
     // Update debug statistics
     m_numFrames += 1;
     m_totalMsElapsed += msElapsed;
     m_maxMsElapsed = Math.max(m_maxMsElapsed, msElapsed);
   }
   requestAnimationFrame(gameLoop);
+}
+
+function sendInfoToPeer() {
+  const size = m_score >= 1000000 ? 7 : 6;
+  const formattedScore = ("0".repeat(size) + m_score).slice(-1 * size);
+  const formattedLines = ("0".repeat(3) + m_lines).slice(-3);
+  const my_data = {
+    opp_score: formattedScore,
+    opp_lines: formattedLines,
+    opp_piece: [
+      m_currentPiece.rotationList,
+      m_currentPiece.colorId,
+      m_currentPiece.id,
+      m_currentPiece.rotationIndex,
+      m_currentPiece.x,
+      m_currentPiece.y,
+      m_currentPiece.board,
+    ],
+    opp_next: [
+      m_nextPiece.rotationList,
+      m_nextPiece.colorId,
+      m_nextPiece.id,
+      m_currentPiece.rotationIndex,
+      m_currentPiece.x,
+      m_currentPiece.y,
+      m_nextPiece.activeTetromino,
+      m_nextPiece.board,
+    ],
+    opp_board: m_board,
+  };
+  //console.log(my_data);
+  //console.log(conn);
+  if (m_nextPiece != null && m_currentPiece != null) {
+    //console.log("vai enviar");
+    conn.send(my_data);
+  }
 }
 
 function refreshHeaderText() {
