@@ -1,13 +1,3 @@
-# Tetris Trainer
+# Tetris Trainer 2P
 
-An NES Tetris clone ([try it in your browser!](https://gregorycannon.github.io/TetrisTrainer)) that lets users play either under standard conditions, or with one of many modifications, to allow for effective practice.
- 
-Features:
-
-- Frame perfect recreation of DAS, rotation, scoring, levels, etc.
-- Draw or paste in a custom board and try playing out that situation
-- Try out killscreen play at 50% or 33% speed (with adjusted DAS speed to mimic a realistic tap range!)
-- Use Dig Practice and Drought Practice mode to practice tough sequences
-- Enter a custom piece sequence to experiment with openers
-- Use custom DAS settings to emulate your own hypertapping speed (without worrying about losing DAS!)
-- Practice 19+ play at a slow speed to improve stacking
+An attempt to turn Greg's [Tetris Trainer](https://github.com/GregoryCannon/TetrisTrainer/) into a remote (p2p) 2 players NES Tetris clone. It's in it's very very early development but you can [try it in your browser already](https://brianch.github.io/TetrisTrainer2p/), just copy the id to the textarea and click connect. Up to now I had better results when both parties were using chrome/chromium.
