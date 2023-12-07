@@ -56,8 +56,12 @@ peer.on("open", function (id) {
   console.log("My peer ID is: " + id);
   myPeerId.innerText = id;
 });
-peer.on("connection", function (conn) {
-  conn.on("data", function (data) {
+peer.on("connection", function (connection) {
+  if (conn == undefined) {
+    document.getElementById("opp-id").value = connection.peer;
+    connectPeer();
+  }
+  connection.on("data", function (data) {
     if (Object.hasOwn(data, "opp_score")) {
       //document.getElementById("opp-score").innerText = data.opp_score;
       //document.getElementById("opp-lines").innerText = data.opp_lines;
@@ -89,6 +93,15 @@ peer.on("connection", function (conn) {
 peer.on("error", function (err) {
   console.log(err);
 });
+
+function connectPeer() {
+  conn = peer.connect(document.getElementById("opp-id").value, {
+    reliable: true,
+  });
+  conn.on("open", function () {
+    document.getElementById("connect-with-opp").innerHTML = "Connected";
+  });
+}
 
 // State relevant to game itself
 let m_currentPiece;
@@ -314,16 +327,6 @@ function resetImplementationVariables() {
   m_totalMsElapsed = 0;
   m_numFrames = 0;
   m_maxMsElapsed = 0;
-}
-
-function connectPeer() {
-  conn = peer.connect(document.getElementById("opp-id").value);
-  // on open will be launch when you successfully connect to PeerServer
-  conn.on("open", function () {
-    // here you have conn.id
-    document.getElementById("connect-with-opp").innerHTML = "Connected";
-    conn.send("hi!");
-  });
 }
 
 function startGame() {
