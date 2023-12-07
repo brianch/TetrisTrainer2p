@@ -10,10 +10,9 @@ import {
   VACANT,
   COLOR_PALETTE,
   BOARD_WIDTH,
-  SquareState,
+  WHITE_COLOR,
 } from "./constants.js";
-import { GetLevel, GetCurrentPiece, calcParity } from "./index.js";
-const GameSettings = require("./game_settings_manager");
+import { GetLevel, GetCurrentPiece } from "./index.js";
 
 // Resize the canvas based on the square size
 mainCanvas.setAttribute("height", SQUARE_SIZE * NUM_ROW);
@@ -156,6 +155,8 @@ Canvas.prototype.drawScoreDisplay = function (score, color) {
 
   const size = score >= 1000000 ? 7 : 6;
   const formattedScore = ("0".repeat(size) + score).slice(-1 * size);
+  this.strokeStyle = WHITE_COLOR;
+  this.fillStyle = WHITE_COLOR;
   this.drawMultiLineText(
     ["SCORE", formattedScore],
     startX,
@@ -170,6 +171,8 @@ Canvas.prototype.drawLinesDisplay = function (numLines, color) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 3 * SQUARE_SIZE;
+  this.strokeStyle = WHITE_COLOR;
+  this.fillStyle = WHITE_COLOR;
 
   const formattedScore = ("0".repeat(3) + numLines).slice(-3);
   this.drawMultiLineText(
@@ -322,73 +325,3 @@ Canvas.prototype.drawBoard = function () {
   // const drawEnd = window.performance.now();
   // console.log(drawEnd - drawStart);
 };
-
-function filledIfExists(row, col, board) {
-  if (col < 0 || col >= NUM_COLUMN || row < 0 || row >= NUM_ROW) {
-    return true;
-  }
-  return board[row][col] != SquareState.EMPTY;
-}
-
-function getTopmostHole(board) {
-  for (let r = 0; r < NUM_ROW; r++) {
-    for (let c = 0; c < NUM_COLUMN; c++) {
-      if (
-        board[r][c] == SquareState.EMPTY &&
-        filledIfExists(r - 1, c, board) &&
-        filledIfExists(r + 1, c, board) &&
-        filledIfExists(r, c - 1, board) &&
-        filledIfExists(r, c + 1, board)
-      ) {
-        return [r, c];
-      }
-    }
-  }
-  return [];
-}
-
-function getRowsCoveringWell(board) {
-  let r = NUM_ROW - 1;
-  let rowsCoveringWell = [];
-  while (!filledIfExists(r, NUM_COLUMN - 1, board)) {
-    r--;
-  }
-  while (r >= 0 && filledIfExists(r, NUM_COLUMN - 1, board)) {
-    rowsCoveringWell.push(r);
-    r--;
-  }
-  return rowsCoveringWell;
-}
-
-function fillSquare(row, col, color) {
-  context.fillStyle = color;
-  context.fillRect(
-    col * SQUARE_SIZE + PIXEL_SIZE,
-    row * SQUARE_SIZE + PIXEL_SIZE,
-    SQUARE_SIZE - 3 * PIXEL_SIZE,
-    SQUARE_SIZE - 3 * PIXEL_SIZE
-  );
-}
-
-function fillRow(row, color, board) {
-  for (let loopCol = 0; loopCol < NUM_COLUMN; loopCol++) {
-    if (board[row][loopCol] == SquareState.EMPTY) {
-      fillSquare(row, loopCol, color);
-    }
-  }
-}
-
-function numToSingleDigiHex(num) {
-  num = Math.floor(num);
-  if (num < 0) {
-    throw new Error("Can't convert negative num to hex");
-  }
-  if (num < 10) {
-    return "" + num;
-  } else if (num < 16) {
-    return ["a", "b", "c", "d", "e", "f"][num - 10];
-  } else {
-    // Max out at 16 because single digit
-    return "f";
-  }
-}
