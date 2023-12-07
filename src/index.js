@@ -42,8 +42,14 @@ let m_boardGenerator = new BoardGenerator(m_board);
 let m_pieceSelector = new PieceSelector();
 let conn;
 let myStream;
-let peer = new Peer(null, {
-  debug: 2,
+var peer = new Peer({
+  config: {
+    iceServers: [
+      {
+        urls: ["stun:stun.l.google.com:19302", "stun:stun2.l.google.com:19302"],
+      },
+    ],
+  },
 });
 peer.on("open", function (id) {
   console.log("My peer ID is: " + id);
