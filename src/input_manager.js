@@ -18,29 +18,25 @@ const keyEditPopup = document.getElementById("edit-key");
 
 const DEFAULT_KEY_MAP = {
   RESTART: "r",
-  //  REWIND: "v",
-  //  FAST_FORWARD: "b",
   START_PAUSE: "Enter",
   QUIT: "q",
-  ROTATE_LEFT: "ArrowLeft",
-  ROTATE_RIGHT: "ArrowRight",
-  LEFT: "a",
-  DOWN: "z",
-  RIGHT: "s",
+  ROTATE_LEFT: "z",
+  ROTATE_RIGHT: "x",
+  LEFT: "ArrowLeft",
+  DOWN: "ArrowDown",
+  RIGHT: "ArrowRight",
 };
 
 let KEY_MAP = DEFAULT_KEY_MAP;
 
 const idToKeyMap = [
-  ["key-rot-left", "LEFT"],
-  ["key-rot-right", "RIGHT"],
-  ["key-left", "ROTATE_LEFT"],
-  ["key-right", "ROTATE_RIGHT"],
+  ["key-rot-left", "ROTATE_LEFT"],
+  ["key-rot-right", "ROTATE_RIGHT"],
+  ["key-left", "LEFT"],
+  ["key-right", "RIGHT"],
   ["key-down", "DOWN"],
   ["key-start-pause", "START_PAUSE"],
   ["key-restart", "RESTART"],
-  //  ["key-undo", "REWIND"],
-  //  ["key-redo", "FAST_FORWARD"],
   ["key-quit", "QUIT"],
 ];
 
