@@ -42,7 +42,7 @@ let m_opp_canvas;
 let m_boardGenerator = new BoardGenerator(m_board);
 let m_pieceSelector = new PieceSelector();
 let conn;
-let myStream;
+//let myStream;
 var peer = new Peer({
   config: {
     iceServers: [
@@ -84,8 +84,11 @@ peer.on("connection", function (connection) {
       m_opp_canvas.drawBoard(true);
       m_opp_canvas.drawPiece(opp_piece, true);
       m_opp_canvas.drawNextBox(opp_next, true);
-      m_opp_canvas.drawScoreDisplay(data.opp_score, true);
+      m_opp_canvas.drawLevelDisplay(data.opp_level, true);
+      m_opp_canvas.drawTetrisRateDisplay(data.opp_trt, data.opp_lines, true);
+      m_opp_canvas.drawScoreDisplay(m_score, m_opp_score, true);
       m_opp_canvas.drawLinesDisplay(data.opp_lines, true);
+      m_opp_score = data.opp_score;
     }
     //console.log(data);
   });
@@ -113,6 +116,8 @@ let m_gameState;
 let m_score;
 let m_tetrisCount;
 let m_isPaused = false;
+
+let m_opp_score = 0;
 
 // State relevant to game **implementation**
 let m_gravityFrameCount;
@@ -574,12 +579,14 @@ function sendInfoToPeer() {
       m_nextPiece.rotationList,
       m_nextPiece.colorId,
       m_nextPiece.id,
-      m_currentPiece.rotationIndex,
-      m_currentPiece.x,
-      m_currentPiece.y,
+      m_nextPiece.rotationIndex,
+      m_nextPiece.x,
+      m_nextPiece.y,
       m_nextPiece.activeTetromino,
       m_nextPiece.board,
     ],
+    opp_level: m_level,
+    opp_trt: m_tetrisCount,
     opp_board: m_board,
   };
   //console.log(my_data);
@@ -622,7 +629,7 @@ function drawNextBox(nextPiece) {
 
 function refreshScoreHUD() {
   m_canvas.drawLevelDisplay(m_level);
-  m_canvas.drawScoreDisplay(m_score);
+  m_canvas.drawScoreDisplay(m_score, m_opp_score);
   m_canvas.drawLinesDisplay(m_lines);
   m_canvas.drawTetrisRateDisplay(m_tetrisCount, m_lines);
 }

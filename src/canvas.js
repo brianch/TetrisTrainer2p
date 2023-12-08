@@ -165,7 +165,7 @@ Canvas.prototype.drawNextBox = function (nextPiece, opp = false) {
   }
 };
 
-Canvas.prototype.drawScoreDisplay = function (score, opp = false) {
+Canvas.prototype.drawScoreDisplay = function (score, oppScore, opp = false) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 0.5 * SQUARE_SIZE;
@@ -182,12 +182,28 @@ Canvas.prototype.drawScoreDisplay = function (score, opp = false) {
     "center",
     opp
   );
+  if (!opp) {
+    const diff = score - oppScore;
+    var color = "green";
+    if (diff < 0) {
+      color = "red";
+    }
+    this.drawMultiLineText(
+      ["DIFF", "" + diff.toString()],
+      startX,
+      startY + 50,
+      width,
+      "center",
+      false,
+      color
+    );
+  }
 };
 
 Canvas.prototype.drawLinesDisplay = function (numLines, opp = false) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
-  const startY = 3 * SQUARE_SIZE;
+  const startY = 5 * SQUARE_SIZE;
   this.strokeStyle = WHITE_COLOR;
   this.fillStyle = WHITE_COLOR;
 
@@ -202,7 +218,7 @@ Canvas.prototype.drawLinesDisplay = function (numLines, opp = false) {
   );
 };
 
-Canvas.prototype.drawLevelDisplay = function (level) {
+Canvas.prototype.drawLevelDisplay = function (level, opp = false) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 14 * SQUARE_SIZE;
@@ -213,11 +229,16 @@ Canvas.prototype.drawLevelDisplay = function (level) {
     startX,
     startY,
     width,
-    "center"
+    "center",
+    opp
   );
 };
 
-Canvas.prototype.drawTetrisRateDisplay = function (tetrisCount, lines) {
+Canvas.prototype.drawTetrisRateDisplay = function (
+  tetrisCount,
+  lines,
+  opp = false
+) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 17 * SQUARE_SIZE;
@@ -232,7 +253,8 @@ Canvas.prototype.drawTetrisRateDisplay = function (tetrisCount, lines) {
     startX,
     startY,
     width,
-    "center"
+    "center",
+    opp
   );
 };
 
@@ -250,7 +272,8 @@ Canvas.prototype.drawMultiLineText = function (
   startY,
   width,
   align,
-  opp = false
+  opp = false,
+  color = "BLACK"
 ) {
   var ctx;
   if (opp) {
@@ -266,7 +289,7 @@ Canvas.prototype.drawMultiLineText = function (
   // Write "x of x" text
   ctx.textAlign = "center";
   ctx.font = "18px 'Press Start 2P'";
-  ctx.fillStyle = "BLACK";
+  ctx.fillStyle = color;
 
   const alignOffsetFactor = align == "center" ? width / 2 : 0;
 
