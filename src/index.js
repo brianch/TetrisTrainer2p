@@ -81,9 +81,9 @@ peer.on("connection", function (connection) {
         data.opp_next[5]
       );
       m_opp_canvas = new Canvas(data.opp_board);
-      m_opp_canvas.drawBoard(true);
-      m_opp_canvas.drawPiece(opp_piece, true);
-      m_opp_canvas.drawNextBox(opp_next, true);
+      m_opp_canvas.drawBoard(true, data.opp_level);
+      m_opp_canvas.drawPiece(opp_piece, true, data.opp_level);
+      m_opp_canvas.drawNextBox(opp_next, true, data.opp_level);
       m_opp_canvas.drawLevelDisplay(data.opp_level, true);
       m_opp_canvas.drawTetrisRateDisplay(data.opp_trt, data.opp_lines, true);
       m_opp_canvas.drawScoreDisplay(m_score, m_opp_score, true);
@@ -573,7 +573,7 @@ function sendInfoToPeer() {
       m_currentPiece.rotationIndex,
       m_currentPiece.x,
       m_currentPiece.y,
-      m_currentPiece.board,
+      //m_currentPiece.board,
     ],
     opp_next: [
       m_nextPiece.rotationList,
@@ -583,7 +583,7 @@ function sendInfoToPeer() {
       m_nextPiece.x,
       m_nextPiece.y,
       m_nextPiece.activeTetromino,
-      m_nextPiece.board,
+      //m_nextPiece.board,
     ],
     opp_level: m_level,
     opp_trt: m_tetrisCount,

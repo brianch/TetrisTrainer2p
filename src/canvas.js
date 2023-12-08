@@ -118,7 +118,7 @@ Canvas.prototype.drawSquare = function (
  * Draws the next box. If nextPiece is nonnull, draws the piece in it.
  * @param {Piece object} nextPiece
  */
-Canvas.prototype.drawNextBox = function (nextPiece, opp = false) {
+Canvas.prototype.drawNextBox = function (nextPiece, opp = false, lvl) {
   // All in units of SQUARE_SIZE
   const startX = NUM_COLUMN + 1;
   const startY = 8;
@@ -144,7 +144,8 @@ Canvas.prototype.drawNextBox = function (nextPiece, opp = false) {
     const pieceStartX =
       nextPiece.id === "I" || nextPiece.id === "O" ? startX + 0.5 : startX;
     const pieceStartY = nextPiece.id === "I" ? startY - 0.25 : startY + 0.25;
-    const color = COLOR_PALETTE[nextPiece.colorId][GetLevel() % 10];
+    const level = lvl || GetLevel();
+    const color = COLOR_PALETTE[nextPiece.colorId][level % 10];
 
     // draw the piece
 
@@ -304,11 +305,11 @@ Canvas.prototype.drawMultiLineText = function (
   }
 };
 
-Canvas.prototype.drawPiece = function (piece, opp = false) {
+Canvas.prototype.drawPiece = function (piece, opp = false, lvl) {
   if (piece == undefined) {
     return;
   }
-  const level = GetLevel();
+  const level = lvl || GetLevel();
   const border = piece.id === "T" || piece.id === "O" || piece.id === "I";
   for (let r = 0; r < piece.activeTetromino.length; r++) {
     for (let c = 0; c < piece.activeTetromino[r].length; c++) {
@@ -353,9 +354,9 @@ Canvas.prototype.unDrawCurrentPiece = function () {
 };
 
 // Draw the pieces locked into the board (NB: does not render the current piece)
-Canvas.prototype.drawBoard = function (opp = false) {
+Canvas.prototype.drawBoard = function (opp = false, lvl) {
   // const drawStart = window.performance.now();
-  const level = GetLevel();
+  const level = lvl || GetLevel();
   for (let r = 0; r < NUM_ROW; r++) {
     for (let c = 0; c < NUM_COLUMN; c++) {
       let square = this.board[r][c];
