@@ -63,9 +63,6 @@ peer.on("connection", function (connection) {
   }
   connection.on("data", function (data) {
     if (Object.hasOwn(data, "opp_score")) {
-      //document.getElementById("opp-score").innerText = data.opp_score;
-      //document.getElementById("opp-lines").innerText = data.opp_lines;
-
       const opp_piece = new Piece(
         [data.opp_piece[0], data.opp_piece[1], data.opp_piece[2]],
         data.opp_piece[6],
@@ -75,10 +72,7 @@ peer.on("connection", function (connection) {
       );
       const opp_next = new Piece(
         [data.opp_next[0], data.opp_next[1], data.opp_next[2]],
-        data.opp_next[6],
-        data.opp_next[3],
-        data.opp_next[4],
-        data.opp_next[5]
+        data.opp_next[6]
       );
       m_opp_canvas = new Canvas(data.opp_board);
       m_opp_canvas.drawBoard(true, data.opp_level);
@@ -87,10 +81,11 @@ peer.on("connection", function (connection) {
       m_opp_canvas.drawLevelDisplay(data.opp_level, true);
       m_opp_canvas.drawTetrisRateDisplay(data.opp_trt, data.opp_lines, true);
       m_opp_canvas.drawScoreDisplay(m_score, m_opp_score, true);
+      // because of the differential, we need to also update our score
+      m_opp_canvas.drawScoreDisplay(m_score, m_opp_score);
       m_opp_canvas.drawLinesDisplay(data.opp_lines, true);
       m_opp_score = data.opp_score;
     }
-    //console.log(data);
   });
 });
 peer.on("error", function (err) {
@@ -509,7 +504,6 @@ function runOneFrame() {
           }
         }
         sendInfoToPeer();
-
         break;
     }
 
@@ -573,28 +567,13 @@ function sendInfoToPeer() {
       m_currentPiece.rotationIndex,
       m_currentPiece.x,
       m_currentPiece.y,
-      //m_currentPiece.board,
     ],
-    opp_next: [
-      m_nextPiece.rotationList,
-      m_nextPiece.colorId,
-      m_nextPiece.id,
-      m_nextPiece.rotationIndex,
-      m_nextPiece.x,
-      m_nextPiece.y,
-      m_nextPiece.activeTetromino,
-      //m_nextPiece.board,
-    ],
+    opp_next: [m_nextPiece.rotationList, m_nextPiece.colorId, m_nextPiece.id],
     opp_level: m_level,
     opp_trt: m_tetrisCount,
     opp_board: m_board,
   };
-  //console.log(my_data);
-  //console.log(conn);
-  if (m_nextPiece != null && m_currentPiece != null) {
-    //console.log("vai enviar");
-    conn.send(my_data);
-  }
+  conn.send(my_data);
 }
 
 function refreshHeaderText() {
