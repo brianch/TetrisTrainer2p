@@ -41,59 +41,70 @@ let m_canvas = new Canvas(m_board);
 let m_opp_canvas;
 let m_boardGenerator = new BoardGenerator(m_board);
 let m_pieceSelector = new PieceSelector();
+let m_ready = false;
 let conn;
+let peer_config = {
+  debug: 3,
+  iceServers: [
+    {
+      url: "stun:stun.l.google.com:19302",
+    },
+  ],
+};
 //let myStream;
-var peer = new Peer({
-  config: {
-    debug: 3,
-    host: "1.peerjs.com",
-    secure: true,
-    iceServers: [
-      {
-        urls: ["stun:stun.l.google.com:19302", "stun:stun2.l.google.com:19302"],
-      },
-    ],
-  },
-});
-peer.on("open", function (id) {
-  console.log("My peer ID is: " + id);
-  myPeerId.innerText = id;
-});
-peer.on("connection", function (connection) {
-  if (conn == undefined) {
-    document.getElementById("opp-id").value = connection.peer;
-    connectPeer();
-  }
-  connection.on("data", function (data) {
-    if (Object.hasOwn(data, "opp_score")) {
-      const opp_piece = new Piece(
-        [data.opp_piece[0], data.opp_piece[1], data.opp_piece[2]],
-        data.opp_piece[6],
-        data.opp_piece[3],
-        data.opp_piece[4],
-        data.opp_piece[5]
-      );
-      const opp_next = new Piece(
-        [data.opp_next[0], data.opp_next[1], data.opp_next[2]],
-        data.opp_next[6]
-      );
-      m_opp_canvas = new Canvas(data.opp_board);
-      m_opp_canvas.drawBoard(true, data.opp_level);
-      m_opp_canvas.drawPiece(opp_piece, true, data.opp_level);
-      m_opp_canvas.drawNextBox(opp_next, true, data.opp_level);
-      m_opp_canvas.drawLevelDisplay(data.opp_level, true);
-      m_opp_canvas.drawTetrisRateDisplay(data.opp_trt, data.opp_lines, true);
-      m_opp_canvas.drawScoreDisplay(m_score, m_opp_score, true);
-      // because of the differential, we need to also update our score
-      m_opp_canvas.drawScoreDisplay(m_score, m_opp_score);
-      m_opp_canvas.drawLinesDisplay(data.opp_lines, true);
-      m_opp_score = data.opp_score;
-    }
+
+var peer = new Peer(peer_config);
+setPeerJsListeners();
+
+function setPeerJsListeners() {
+  peer.on("open", function (id) {
+    console.log("My peer ID is: " + id);
+    myPeerId.innerText = id;
   });
-});
-peer.on("error", function (err) {
-  console.log(err);
-});
+  peer.on("connection", function (connection) {
+    if (conn == undefined) {
+      document.getElementById("opp-id").value = connection.peer;
+      connectPeer();
+    }
+    connection.on("data", function (data) {
+      if (Object.hasOwn(data, "opp_score")) {
+        const opp_piece = new Piece(
+          [data.opp_piece[0], data.opp_piece[1], data.opp_piece[2]],
+          data.opp_piece[6],
+          data.opp_piece[3],
+          data.opp_piece[4],
+          data.opp_piece[5]
+        );
+        const opp_next = new Piece(
+          [data.opp_next[0], data.opp_next[1], data.opp_next[2]],
+          data.opp_next[6]
+        );
+        m_opp_canvas = new Canvas(data.opp_board);
+        m_opp_canvas.drawBoard(true, data.opp_level);
+        m_opp_canvas.drawPiece(opp_piece, true, data.opp_level);
+        m_opp_canvas.drawNextBox(opp_next, true, data.opp_level);
+        m_opp_canvas.drawLevelDisplay(data.opp_level, true);
+        m_opp_canvas.drawTetrisRateDisplay(data.opp_trt, data.opp_lines, true);
+        m_opp_canvas.drawScoreDisplay(m_score, m_opp_score, true);
+        // because of the differential, we need to also update our score
+        m_opp_canvas.drawScoreDisplay(m_score, m_opp_score);
+        m_opp_canvas.drawLinesDisplay(data.opp_lines, true);
+        m_opp_score = data.opp_score;
+      } else if (data == "ready") {
+        m_opp_ready = true;
+        if (m_ready) {
+          conn.send("start");
+          startGame();
+        }
+      } else if (data == "start") {
+        startGame();
+      }
+    });
+  });
+  peer.on("error", function (err) {
+    console.log(err);
+  });
+}
 
 function connectPeer() {
   conn = peer.connect(document.getElementById("opp-id").value, {
@@ -101,7 +112,19 @@ function connectPeer() {
   });
   conn.on("open", function () {
     document.getElementById("connect-with-opp").innerHTML = "Connected";
+    document.getElementById("ready-button").disabled = false;
   });
+}
+
+function readyClick() {
+  m_ready = true;
+  if (m_opp_ready) {
+    startGame();
+    conn.send("start");
+  } else {
+    conn.send("ready");
+    document.getElementById("ready-button").innerText = "Waiting for op..";
+  }
 }
 
 // State relevant to game itself
@@ -116,6 +139,8 @@ let m_tetrisCount;
 let m_isPaused = false;
 
 let m_opp_score = 0;
+let m_opp_ready = false;
+let m_opp_topout = false;
 
 // State relevant to game **implementation**
 let m_gravityFrameCount;
@@ -332,7 +357,16 @@ function resetImplementationVariables() {
   m_maxMsElapsed = 0;
 }
 
+function resetReadiness() {
+  m_opp_ready = false;
+  m_ready = false;
+  // Reset the button label, it could currently be "waiting for op.."
+  document.getElementById("ready-button").innerText = "Ready!";
+}
+
 function startGame() {
+  resetReadiness();
+
   // Generate the starting board based on the desired starting board type
   switch (GameSettings.getStartingBoardType()) {
     case StartingBoardType.EMPTY:
@@ -735,9 +769,14 @@ document.addEventListener("keyup", (e) => {
   m_inputManager.keyUpListener(e);
 });
 
+/*
 document
   .getElementById("start-button")
   .addEventListener("click", (e) => startGame());
+*/
+document
+  .getElementById("ready-button")
+  .addEventListener("click", (e) => readyClick());
 
 document
   .getElementById("connect-with-opp")
