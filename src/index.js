@@ -45,11 +45,13 @@ let m_ready = false;
 let conn;
 let peer_config = {
   debug: 3,
-  iceServers: [
-    {
-      url: "stun:stun.l.google.com:19302",
-    },
-  ],
+  config: {
+    iceServers: [
+      {
+        url: "stun:stun.l.google.com:19302",
+      },
+    ],
+  },
 };
 //let myStream;
 
