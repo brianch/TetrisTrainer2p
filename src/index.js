@@ -45,6 +45,9 @@ let conn;
 //let myStream;
 var peer = new Peer({
   config: {
+    debug: 3,
+    host: "1.peerjs.com",
+    secure: true,
     iceServers: [
       {
         urls: ["stun:stun.l.google.com:19302", "stun:stun2.l.google.com:19302"],
