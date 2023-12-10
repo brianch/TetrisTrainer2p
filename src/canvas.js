@@ -170,19 +170,8 @@ Canvas.prototype.drawScoreDisplay = function (score, oppScore, opp = false) {
   const width = NEXT_BOX_WIDTH;
   const startX = BOARD_WIDTH + SQUARE_SIZE;
   const startY = 0.5 * SQUARE_SIZE;
+  var currScore;
 
-  const size = score >= 1000000 ? 7 : 6;
-  const formattedScore = ("0".repeat(size) + score).slice(-1 * size);
-  //this.strokeStyle = WHITE_COLOR;
-  //this.fillStyle = WHITE_COLOR;
-  this.drawMultiLineText(
-    ["SCORE", formattedScore],
-    startX,
-    startY,
-    width,
-    "center",
-    opp
-  );
   if (!opp) {
     const diff = score - oppScore;
     var color = "green";
@@ -198,7 +187,20 @@ Canvas.prototype.drawScoreDisplay = function (score, oppScore, opp = false) {
       false,
       color
     );
+    currScore = score;
+  } else {
+    currScore = oppScore;
   }
+  const size = currScore >= 1000000 ? 7 : 6;
+  const formattedScore = ("0".repeat(size) + currScore).slice(-1 * size);
+  this.drawMultiLineText(
+    ["SCORE", formattedScore],
+    startX,
+    startY,
+    width,
+    "center",
+    opp
+  );
 };
 
 Canvas.prototype.drawLinesDisplay = function (numLines, opp = false) {
