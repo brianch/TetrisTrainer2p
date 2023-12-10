@@ -173,8 +173,6 @@ Canvas.prototype.drawScoreDisplay = function (score, oppScore, opp = false) {
 
   const size = score >= 1000000 ? 7 : 6;
   const formattedScore = ("0".repeat(size) + score).slice(-1 * size);
-  //this.strokeStyle = WHITE_COLOR;
-  //this.fillStyle = WHITE_COLOR;
   this.drawMultiLineText(
     ["SCORE", formattedScore],
     startX,

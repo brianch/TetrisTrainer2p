@@ -73,3 +73,17 @@
   box-shadow: 0 12px 24px 0 rgba(60, 60, 60, 1);
   visibility: hidden;
 }
+
+#auth {
+  width: 400px;
+  height: 120px;
+  border: 10px;
+  background: #c9c9c9;
+  color: black;
+  text-align: center;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 12px 24px 0 rgba(60, 60, 60, 1);
+}

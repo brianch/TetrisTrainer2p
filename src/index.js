@@ -58,6 +58,10 @@ let peer_config = {
 var peer = new Peer(peer_config);
 setPeerJsListeners();
 
+document.getElementById("btn-auth").addEventListener("click", showAuth);
+document.getElementById("close-auth").addEventListener("click", showAuth);
+document.getElementById("connect-auth").addEventListener("click", connectAuth);
+
 function setPeerJsListeners() {
   peer.on("open", function (id) {
     console.log("My peer ID is: " + id);
@@ -116,6 +120,45 @@ function connectPeer() {
     document.getElementById("connect-with-opp").innerHTML = "Connected";
     document.getElementById("ready-button").disabled = false;
   });
+}
+
+function showAuth() {
+  const div = document.getElementById("auth");
+  div.hidden = !div.hidden;
+}
+function connectAuth() {
+  const usr = document.getElementById("auth-usr");
+  const pw = document.getElementById("auth-pw");
+  if (
+    usr.value != undefined &&
+    usr.value != "" &&
+    pw.value != undefined &&
+    pw.value != ""
+  ) {
+    peer.disconnect();
+    peer_config = {
+      debug: 3,
+      config: {
+        iceServers: [
+          {
+            url: "stun:stun.l.google.com:19302",
+          },
+          {
+            url: "turn:a.relay.metered.ca:443",
+            username: usr.value,
+            credential: pw.value,
+          },
+          {
+            url: "turn:a.relay.metered.ca:443?transport=tcp",
+            username: usr.value,
+            credential: pw.value,
+          },
+        ],
+      },
+    };
+    peer = new Peer(peer_config);
+    setPeerJsListeners();
+  }
 }
 
 function readyClick() {
