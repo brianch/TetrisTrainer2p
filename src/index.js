@@ -41,6 +41,7 @@ let m_boardGenerator = new BoardGenerator(m_board);
 let m_pieceSelector = new PieceSelector();
 let m_ready = false;
 let conn;
+let is_connected = false;
 let peer_config = {
   debug: 3,
   config: {
@@ -62,7 +63,7 @@ function setPeerJsListeners() {
     myPeerId.innerText = id;
   });
   peer.on("connection", function (connection) {
-    if (conn == undefined) {
+    if (!is_connected) {
       document.getElementById("opp-id").value = connection.peer;
       connectPeer();
     }
@@ -111,6 +112,7 @@ function connectPeer() {
     reliable: true,
   });
   conn.on("open", function () {
+    is_connected = true;
     document.getElementById("connect-with-opp").innerHTML = "Connected";
     document.getElementById("ready-button").disabled = false;
   });
