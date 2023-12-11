@@ -21,9 +21,7 @@ const GameSettings = require("./game_settings_manager");
 
 const headerTextElement = document.getElementById("header-text");
 const preGameConfigDiv = document.getElementById("pre-game-config");
-const randomBoardResetButton = document.getElementById(
-  "random-board-reset-button"
-);
+
 const myPeerId = document.getElementById("my-peer-id");
 
 // Create the initial empty board
@@ -96,10 +94,10 @@ function setPeerJsListeners() {
         m_opp_ready = true;
         if (m_ready) {
           conn.send("start");
-          startGame();
+          runCountdown();
         }
       } else if (data == "start") {
-        startGame();
+        runCountdown();
       }
     });
   });
@@ -121,7 +119,7 @@ function connectPeer() {
 function readyClick() {
   m_ready = true;
   if (m_opp_ready) {
-    startGame();
+    runCountdown();
     conn.send("start");
   } else {
     conn.send("ready");
@@ -364,6 +362,20 @@ function resetReadiness() {
   m_ready = false;
   // Reset the button label, it could currently be "waiting for op.."
   document.getElementById("ready-button").innerText = "Ready!";
+}
+
+async function runCountdown() {
+  preGameConfigDiv.style.visibility = "hidden";
+  const count = document.getElementById("countdown");
+  count.style.display = "flex";
+  setTimeout(
+    function (count) {
+      count.style.display = "none";
+      startGame();
+    },
+    3300,
+    count
+  );
 }
 
 function startGame() {
@@ -657,11 +669,6 @@ function refreshPreGame() {
     preGameConfigDiv.style.visibility = "visible";
   } else {
     preGameConfigDiv.style.visibility = "hidden";
-  }
-  if (m_gameState == GameState.RANDOM_BOARD) {
-    randomBoardResetButton.style.visibility = "visible";
-  } else {
-    randomBoardResetButton.style.visibility = "hidden";
   }
 }
 

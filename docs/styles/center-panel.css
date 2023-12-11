@@ -11,10 +11,6 @@
   position: relative;
 }
 
-#main-canvas-crop {
-  display: none;
-}
-
 #opp-game-container {
   color: black;
 }
@@ -33,20 +29,33 @@
   justify-content: center;
 }
 
-#random-board-reset-button {
+#countdown {
+  font-size: 8em;
   position: absolute;
-  right: 45px;
-  bottom: 30px;
-  width: 80px;
-  height: 80px;
-  background: #f38805;
-  font-size: 70px;
-  line-height: 0px;
-  border: 1px solid black;
+  background-color: black;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 40px;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-#random-board-reset-button:hover {
-  background: #d4984e;
+#countdown-text::after {
+  background-color: black;
+  content: '';
+  animation: count 4s   steps(5, start);
+  animation-iteration-count: 1;
+}
+
+@keyframes count {
+  0% { content: "3"; }
+  30% { content: "2"; }
+  55% { content: "1"; }
+  80% { content: "Tetris!"; }
 }
 
 #presets-panel-title {
